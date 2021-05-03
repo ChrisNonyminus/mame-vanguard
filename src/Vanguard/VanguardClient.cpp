@@ -70,6 +70,10 @@ using namespace Diagnostics;
 //static void EmuThreadExecute(IntPtr ptr);
 static int currentMD = 0;
 int loadromcounter = 1;
+int corestepcounter = 0;
+clock_t current_ticks, delta_ticks;
+clock_t stepspersecond = 0;
+clock_t avgstepspersecond = 0;
 // Define this in here as it's managed and weird stuff happens if it's in a header
 public
 ref class VanguardClient {
@@ -549,11 +553,19 @@ static void STEP_CORRUPT() // errors trapped by CPU_STEP
 void VanguardClientUnmanaged::CORE_STEP() {
     if(!VanguardInitializationComplete)
         return;
-
+	//thanks https://stackoverflow.com/questions/28530798/how-to-make-a-basic-fps-counter
+	current_ticks = clock();
     // Any step hook for corruption
     ActionDistributor::Execute("ACTION");
     STEP_CORRUPT();
-    
+	corestepcounter += 1;
+	delta_ticks = clock() - current_ticks;
+	if (delta_ticks > 0)
+	{
+		stepspersecond = CLOCKS_PER_SEC / delta_ticks;
+		avgstepspersecond = (corestepcounter / current_ticks)/CLOCKS_PER_SEC;
+	}
+	printf("CORE_STEPs Per Second: %d | CORE_STEPs So Far: %d\n", stepspersecond, corestepcounter);
 }
 
 // This is on the main thread not the emu thread

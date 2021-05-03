@@ -217,7 +217,7 @@ long long ManagedWrapper::GetMemorySize(std::string memclass, std::string region
 			unsigned long long maxaddr = (u64)(space.addrmask()) + 1;
 			if (maxaddr < 8)
 			{
-				maxaddr = 0x100000000;
+				maxaddr = 64*1024*1024;
 			}
 			return maxaddr;
 		}

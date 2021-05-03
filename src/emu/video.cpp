@@ -210,7 +210,6 @@ void video_manager::set_frameskip(int frameskip)
 
 void video_manager::frame_update(bool from_debugger)
 {
-	VanguardClientUnmanaged::CORE_STEP();
 	// only render sound and video if we're in the running phase
 	machine_phase const phase = machine().phase();
 	bool skipped_it = m_skipping_this_frame;
@@ -262,8 +261,6 @@ void video_manager::frame_update(bool from_debugger)
 		if (!skipped_it && phase > machine_phase::INIT)
 			recompute_speed(current_time);
 	}
-
-	//VanguardClientUnmanaged::CORE_STEP();
 	
 	// call the end-of-frame callback
 	if (phase == machine_phase::RUNNING)
@@ -652,6 +649,7 @@ bool video_manager::finish_screen_updates()
 		if (screen.update_quads())
 			anything_changed = true;
 
+	VanguardClientUnmanaged::CORE_STEP();
 	// draw HUD from LUA callback (if any)
 	anything_changed |= emulator_info::frame_hook();
 
@@ -663,8 +661,9 @@ bool video_manager::finish_screen_updates()
 		// iterate over screens and update the burnin for the ones that care
 		for (screen_device &screen : iter)
 			screen.update_burnin();
-	}
-
+	}/*
+	if (anything_changed)
+		VanguardClientUnmanaged::CORE_STEP();*/
 	// draw any crosshairs
 	for (screen_device &screen : iter)
 		machine().crosshair().render(screen);
