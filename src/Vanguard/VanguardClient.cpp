@@ -565,7 +565,7 @@ void VanguardClientUnmanaged::CORE_STEP() {
 		stepspersecond = CLOCKS_PER_SEC / delta_ticks;
 		avgstepspersecond = (corestepcounter / current_ticks)/CLOCKS_PER_SEC;
 	}
-	printf("CORE_STEPs Per Second: %d | CORE_STEPs So Far: %d\n", stepspersecond, corestepcounter);
+	//printf("CORE_STEPs Per Second: %d | CORE_STEPs So Far: %d\n", stepspersecond, corestepcounter);
 }
 
 // This is on the main thread not the emu thread

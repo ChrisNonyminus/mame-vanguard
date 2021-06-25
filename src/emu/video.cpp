@@ -648,8 +648,11 @@ bool video_manager::finish_screen_updates()
 	for (screen_device &screen : iter)
 		if (screen.update_quads())
 			anything_changed = true;
-
+	clock_t timer = 0;
+	clock_t current_time = clock();
 	VanguardClientUnmanaged::CORE_STEP();
+	timer = clock() - current_time;
+	//printf("Time it took to call CORE_STEP: %i\n", timer);
 	// draw HUD from LUA callback (if any)
 	anything_changed |= emulator_info::frame_hook();
 
